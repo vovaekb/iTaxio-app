@@ -1,0 +1,665 @@
+p, a, span, label, input[type=tel] {
+   font-size: 14pt;
+}
+
+
+body {
+    background: #e5e5e5;
+}
+
+.button {
+    border: 1px solid #ffa908 !important;
+    background: #f8d94c !important;
+    border-radius: 0;
+    float: left;
+    cursor: pointer;
+}
+
+.panes-title {
+    width: 100%;
+}
+
+.pane-button {
+    width: 50%;
+    padding: 8px 0px;
+    background: #ddd;
+    border: 1px solid #999;
+    text-align: center;
+    cursor: pointer;
+}
+
+.right-pane-button {
+    width: 49%;
+}
+
+.active-pane-button {
+    background: #999;
+}
+
+input[type=text], input[type=tel], textarea {
+    border: solid 1px #CCCCCC;
+    padding: 10px 0;
+    font-size: 14pt;
+    color: #666666;
+}
+
+.header {
+    position: relative;
+    overflow: hidden;
+    zoom: 1;
+    background: #2489ce;
+}
+
+.fixed-header {
+    height: 45px;
+}
+
+.content {
+    /*position: relative;*/
+    padding: 10px;
+}
+
+/* Elements container */
+
+.container {
+    border: 1px solid #bbb;
+    margin-bottom: 10px;
+    background: #fff /*#eeeeee*/;
+    -webkit-box-shadow: 0px 2px 5px #aaaaaa; /* Для Safari и Chrome */
+    box-shadow: 0px 2px 5px #aaaaaa;
+    position: relative;
+    overflow: hidden;
+}
+
+.input-container {
+    /*position: relative;*/
+    margin-bottom: 10px;
+}
+
+.buttons-container {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.datepicker-content {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.part {
+    width: auto;
+    padding: 10px;
+    height: auto;
+    overflow: hidden;
+}
+
+.address-input-container {
+    width: auto;
+    padding: 10px 0 10px 10px;
+    height: auto;
+    overflow: hidden;
+}
+
+.order-details-list {
+}
+
+.order-details-list li {
+}
+
+ul {
+    background: #fff;
+}
+
+ul.address-list li {
+    /*min-height: 53px;*/
+    position: relative;
+    overflow: hidden;
+    padding: 10px 15px;
+}
+
+ul.address-list li p, ul.history-addresses-list > li > div.address-text {
+    display: inline-block;
+    line-height: 25px;
+    text-indent: 0;
+    text-align: left;
+}
+
+ul.addresses-list, .order-details-list {
+    padding: 0;
+}
+
+ul.addresses-list li, .order-details-list li, ul.drivers-list li {
+    min-height: 35px;
+    position: relative;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.order-detail-listitem, .auth-button {
+    /*margin: 10px;*/
+}
+
+.order-detail-listitem, .distance-label, .auth-button {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    /*max-width: 210px;*/
+    font-size: 14px;
+    overflow: visible;
+}
+
+
+
+.order-detail-listitem, .distance-label {
+    background-repeat: no-repeat;
+    padding: 6px;
+    font-size: 14pt;
+}
+
+.order-detail-listitem, .distance-label {
+    padding: 0px 0px 0px 50px;
+    min-height: 30px;
+    line-height: 38px;
+}
+
+.region-list-item {
+    /*background-image: url(../img/gerbs/rostov-gerb1.png);*/
+    background-repeat: no-repeat;
+    background-position: 10px 10px;
+    min-height: 56px;
+    padding: 10px 10px 10px 80px;
+    line-height: 50px;
+}
+
+.region-list-item span {
+    line-height: normal;
+    text-indent: 0px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+
+.order-detail-listitem span {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+}
+
+ul.history-addresses-list li div.address-action {
+    margin-top: 2px;
+    padding: 5px 0px;
+}
+
+.address-action {
+    float: right;
+}
+
+.address-action img.remove-icon, div.address-action img.plus-icon, div.address-action img.minus-icon {
+    width: 22px;
+    height: 21px;
+}
+
+div.address-action img.minus-icon {
+    width: 20px !important;
+}
+
+.date-label {
+    background: url('../img/watch.png');
+    background-repeat: no-repeat;
+}
+
+.comment-label {
+    background: url('../img/comment.png');
+    background-repeat: no-repeat;
+}
+
+div.comment-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    white-space: nowrap;
+    font-family: "Lucida Grande", "Tahoma" !important;
+}
+
+.order-type-label {
+    line-height: 40px;
+    text-align: center;
+}
+
+.order-type-label div{
+    font-family: "Lucida Grande", "Tahoma" !important;
+}
+
+.phone-label {
+    background: url('../img/phone.png');
+    background-repeat: no-repeat;
+}
+
+.phone-format-label{
+    margin-right: 10px;
+    display: inline-block;
+    float: left;
+    text-align: right;
+    line-height: 40px;
+}
+
+div.phone-input-container {
+    overflow: hidden;
+    border: solid 1px #CCCCCC;
+}
+
+.phone-input {
+    width: 100%;
+    border: none !important;
+}
+
+.order-type-toggle {
+    /*margin: 0 auto;*/
+    width: 100%; /*280px*/
+}
+
+.history-title {
+    width: 100%;
+}
+
+.history-addresses-list li {
+}
+
+.history-addresses-list > li > div.address-text {
+}
+
+/* Address screen */
+div.confirm-buttons-panel td.button {
+    padding: 8px 0px;
+    width: 50%;
+    float: none;
+    cursor: pointer;
+}
+
+div.confirm-buttons-panel a.right-button {
+    width: 49%;
+}
+
+div.confirm-single-button-panel a.button {
+    padding: 8px 0px;
+    width: 100%;
+}
+
+.address-icon {
+    float: left;
+    width: 36px;
+    height: 36px;
+    margin: 3px 10px 3px 3px;
+}
+
+.address-icon img {
+
+    display: block;
+}
+
+.address-house-icon {
+    float: left;
+    width: 36px;
+    height: 36px;
+    margin: 3px 10px 3px 3px;
+    background-image: url(../img/building1.png);
+}
+
+.street-input {
+
+}
+
+
+
+/* Date screen */
+
+.datepicker-block {
+    padding: 10px;
+}
+
+.date-part-select {
+    width: 33%;
+    float: left;
+}
+
+.date-part-select > div {
+    text-align: center;
+    width: 100%;
+    height: 50px;
+}
+
+.date-part-select > div > span {
+    padding: 5px;
+    text-align: center;
+    line-height: 50px;
+}
+
+.day-select {
+}
+
+.time-part-select {
+}
+
+.datepicker-button {
+    margin-right: 10px;
+    border: 1px solid #bbb;
+    width: 100%;
+    padding: 2px;
+    font: 20pt "Arial";
+}
+
+
+/* Menu screen */
+ul.menu-list li {
+   position: relative;
+    overflow: hidden;
+    padding: 10px;
+}
+
+ul.menu-list hr {
+    border: 1px solid #999;
+}
+
+/* Comment screen */
+.history-comments-list li div.address-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* Profile screen */
+.phone-confirm-form {
+
+}
+
+div.phone-confirm-form a.get-code-button {
+    float: right;
+    width: 7em;
+}
+
+a.get-code-button {
+    width: 100%;
+    padding: 10px 0px;
+}
+
+div.phone-confirm-form div.code-input-container {
+    padding-right: .3em;
+}
+
+/* Balance screen */
+div.refill-form a.refill-button {
+    float: right;
+    width: 5em;
+    margin-right: 0px;
+}
+
+/* About screen */
+.about-text {
+    padding: 20px;
+}
+
+div.about-text p, .about-text span {
+    font-size: 13pt;
+}
+
+/* Route completion screen */
+
+.distance-label {
+    padding-left: 40px;
+    background: url('../img/distance.gif');
+    background-repeat: no-repeat;
+    line-height: 25px;
+}
+
+.order-complete-block {
+    min-height: 40px;
+    padding: 0px;
+}
+
+.cost-panel img.cost-digit{
+    margin: 0px;
+    padding: 0px;
+    float: left;
+}
+
+.fixed-buttons {
+    width: 100%;
+    height: 60px;
+    /*position: fixed;
+    left: 0;
+    bottom: -1px;
+    padding-bottom: -1px;*/
+    border: 1px solid #ff0000;
+    /*margin-top: 484px;*/
+
+    position: fixed !important;
+    left: 0px !important;
+    right: 0px !important;
+    bottom: 0px !important;
+    z-index: 999 !important;
+}
+
+.fixed-button {
+    position: relative;
+    width: 598px;
+    float: left;
+    background: #202020;
+    border: 1px solid #000;
+    padding: 25px;
+    color: #ffffff;
+    /*bottom: -50px;*/
+}
+
+div.refill-form {
+    padding: 10px 7px;
+}
+
+.code-input-container {
+    overflow: hidden;
+    padding-right: .6em;
+}
+
+.code-input {
+    width: 100%;
+}
+
+.send-code-button {
+    float: right;
+}
+
+.field-label {
+    display: block;
+    line-height: 40px;
+}
+
+/* Drivers list */
+.drivers-list {
+
+}
+
+.drivers-list p {
+    float: left;
+    text-indent: 0px;
+}
+
+.drivers-list .rating {
+    margin-left: 10px;
+}
+
+p.driver-title {
+    font-weight: bold;
+}
+
+p.auto-mark {
+    width: 100%;
+}
+
+/* Drivers info */
+.pagination-container {
+    width: 100%;
+    text-align: center;
+}
+
+
+.slides-pagination {
+    height: 13px;
+    /*float: left;*/
+    margin-bottom: 5px;
+    padding: 8px;
+
+    text-align: left;
+    /*width: 98px;*/
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.drivers-cards-pagination-circle {
+    height: 13px;
+    width: 13px;
+    margin-right: 15px;
+    background: url('../img/pagination.png') 0 0;
+    float: left;
+    cursor: pointer;
+}
+
+.active-circle {
+    background-position: 0 13px;
+}
+
+.drivers-list-wrapper, .intro-steps-list-wrapper {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.drivers-list-wrapper ul, .intro-steps-list-wrapper ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: none;
+    -webkit-transition: -webkit-transform 0.3s linear;
+}
+
+div.drivers-list-wrapper ul li, .intro-steps-list-wrapper ul li {
+    float: left;
+    border: 0;
+    padding: 0px;
+}
+
+.driver-info {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.driver-info img {
+    position: relative;
+    float: left;
+    margin-right: 10px;
+}
+
+.driver-info > div.driver-details-info > p.driver-title {
+    font-weight: bold;
+    font-size: 16pt;
+    text-indent: 0;
+}
+
+div.car-info {
+    /*width: 100%;*/
+    position: relative;
+    float: left;
+    padding-top: 10px;
+}
+.model-logo {
+    width: 120px;
+    float: left;
+}
+
+div.car-details {
+    position: relative;
+    overflow: hidden;
+}
+
+div.driver-details-info {
+    position: relative;
+}
+
+div.car-info-detail {
+    margin-right: 5px;
+    width: 100%;
+    float: left;
+}
+
+div.car-info-detail .car-detail-value {
+    float: left;
+    font-weight: bold;
+}
+
+div.car-info-detail p {
+    text-indent: 0px;
+}
+
+.car-detail-label {
+    float: left;
+    padding-bottom: 5px;
+    padding-right: 10px;
+    color: #999999;
+    font-size: 13pt;
+}
+
+.rating {
+    float: left;
+    background: url('../img/star-off.png') repeat-x;
+    width: 80px;
+    height: 15px;
+    margin-right: 8px;
+}
+
+.rating-value {
+    background: url('../img/star-on.png') repeat-x;
+    height: 15px;
+}
+
+.auth-field {
+    width: 100%;
+    float: left;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.flamp-connect {
+    width: 100%;
+    margin-top: 10px;
+    float: left;
+}
+
+.auth-field div {
+    float: left;
+    margin-right: 15px;
+}
+
+.auth-button {
+    display: block;
+    float: left;
+    padding: 10px; /* 10px 10px 60px*/
+    margin: 0;
+}
+
+.auth-button a, .auth-button p {
+    float: left;
+}
+
+.facebook-button {
+    /*background: url('../img/fb.jpg');*/
+    /*background-repeat: no-repeat;*/
+}
+
+.auth-button-icon {
+    width: 40px;
+    height: 40px;
+}

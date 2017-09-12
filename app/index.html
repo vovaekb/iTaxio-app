@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <title>Atlas taxi app</title>
+
+    <link rel="stylesheet" href="styles/main.css"/>
+    <link rel="stylesheet" href="styles/mobile.css"/>
+    <link rel="stylesheet" href="styles/switch.css"/>
+    <link rel="stylesheet" href="styles/swipe.css"/>
+
+</head>
+<body>
+
+<div class="splashscreen">
+    <img src="img/splash.png" alt=""/>
+</div>
+<div class="bg-shading" data-bind="visible: isPointsLoading, shader: ''"></div>
+<div class="progress-overlay loading" data-bind="visible: isPointsLoading">
+    <span>Идет расчет маршрута</span>
+</div>
+<!-- Home page -->
+<div class="page home" data-bind="page: 'home'">
+    <div class="header">
+        <p class="title main-title" data-bind="text: pageTitle">Заказ такси: <!----></p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div class="content" data-bind="with: order">
+        <div class="region-name-container">
+            <img class="city-gerb-img" data-bind="attr: { src: 'img/gerbs/' + $root.regionId() + '.png' }" alt=""/>
+            <div class="region-name">
+                <a data-bind="text: $root.regionName, linkTo: 'region'"></a>
+            </div>
+        </div>
+        <div class="container">
+                <ul class="addresses-list part" data-bind="foreach: addresses">
+                    <li data-bind="/*click: $root.setAddressEditing, */">
+                        <table cellspacing="0" class="order-detail-listitem address-listitem" data-bind="addressLine: $index, myClick: $root.addressLineClick">
+                            <tr>
+                                <td>
+                                    <span data-bind="text: streetName() != '' ? formatString() : $root.addressLabel($index)"></span>
+                                </td>
+                                <td data-bind="visible: $parent.isAddressLast($index) && $parent.addresses().length < 6">
+                                    <div class="address-action">
+                                        <img class="plus-icon" src="img/plus.png" width="24" height="36">
+                                    </div>
+                                </td>
+                                <td class="address-action" data-bind="visible: $parent.isAddressBeforeLast($index)">
+                                    <div class="address-action">
+                                        <img class="minus-icon" src="img/minus.png" width="24" height="36">
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <!--<div class="order-detail-listitem address-listitem" data-bind="addressLine: $index, myClick: $root.addressLineClick">
+                            <span data-bind="text: streetName() != '' ? formatString() : $root.addressLabel($index)"></span>
+                            <div class="address-action" data-bind="visible: $parent.isAddressLast($index) && $parent.addresses().length < 6">
+                                <img class="plus-icon" src="img/plus.png" width="24" height="36">
+                            </div>
+                            <div class="address-action" data-bind="visible: $parent.isAddressBeforeLast($index)">
+                                <img class="minus-icon" src="img/minus.png" width="24" height="36">
+                            </div>
+                        </div>-->
+
+                    </li>
+                </ul>
+
+            <ul class="order-details-list part">
+                <li data-bind="with: date">
+                    <table class="date-label order-detail-listitem" data-bind="click: function(){ controller.navigate('date', true); }">
+                        <tr>
+                            <td>
+                                <span data-bind="text: formatFullDate">Дата и время</span>
+                            </td>
+                        </tr>
+                    </table>
+                </li>
+
+                <li>
+                    <div class="order-detail-listitem comment-label" data-bind="click: function() { controller.navigate('parameters', true); }">
+                        <div class="comment-text" data-bind="/*text: comment() == '' ? 'Комментарий к заказу ' : comment()*/">Параметры заказа</div>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="order-detail-listitem phone-label">
+                        <div>
+                            <label class="phone-format-label">+7 </label>
+                            <div class="phone-input-container">
+                                <input type="tel" class="text-input phone-input" data-bind="value: phone, element: $root.phoneInput, valueUpdate: ['afterkeydown', 'input']" placeholder="10-значный номер телефона" />
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="part">
+                <a class="button" href="#" data-bind="click: $root.costCount">Рассчитать</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Carousel menu -->
+<div class="page menu-page" data-bind="page: 'carouselMenu'">
+    <div class="header fixed-header" style="position: relative">
+        <div class="btn-left btn-back" data-bind="click: $root.moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">Карусель меню</p>
+    </div>
+    <div class="content" style="padding: 0; position: relative">
+        <section class="stage" id="menu-container">
+            <img id="center" src="img/icons/planets/sun.png" />
+        </section>
+        <!--<div style="float: left">
+            <button onclick="clearMenuData()">Clear</button>
+            </div>
+            <p data-bind="text: 'Item is null: ' + ( item() == null)"></p>-->
+    </div>
+</div>
+
+<!-- Menu page -->
+<div class="page menu-page" data-bind="page: 'menu'">
+    <div class="header fixed-header">
+        <div class="btn-left btn-back" data-bind="click: $root.moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">Меню</p>
+    </div>
+    <div class="content">
+        <div class="container">
+            <ul class="menu-list">
+                <li data-bind="linkTo: 'home'">
+                    <p>Заказ такси</p>
+                </li>
+                <hr/>
+                <li data-bind="linkTo: 'profile'">
+                    <p>Мой аккаунт</p>
+                </li>
+                <li data-bind="linkTo: 'balance'">
+                    <p>Пополнить счет</p>
+                </li>
+                <li data-bind="linkTo: 'options'">
+                    <p>Социальные сети</p>
+                </li>
+                <hr/>
+                <li data-bind="linkTo: 'intro'">
+                    <p>Наши преимущества</p>
+                </li>
+                <li data-bind="linkTo: 'settings'">
+                    <p>Настройки</p>
+                </li>
+                <li data-bind="linkTo: 'about'">
+                        <p>О программе</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Profile screen -->
+<div class="page profile-page" data-bind="page: 'profile'">
+    <div class="header fixed-header">
+        <div class="btn-left btn-back" data-bind="click: $root.moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">Мой профиль</p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div class="content" data-bind="with: applicationUser">
+        <div data-bind="visible: !isAuthorized()">
+            <div class="container">
+                <div class="part phone-confirm-form">
+                    <label class="phone-format-label">+7 </label>
+                    <div class="code-input-container">
+                        <input type="tel" class="cool" data-bind="value: login" placeholder="Введите номер телефона"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-container" data-bind="visible: !isCodeRequested()">
+                <a class="button get-code-button" data-bind="click: requireCode">Получить код</a>
+            </div>
+
+            <div class="container" data-bind="visible: isAuthorized() || isCodeRequested">
+                <div class="part">
+                    <a href="#" class="button send-code-button" data-bind="click: signUp">ОК</a>  <!--data-bind="click: sendConfirmRequest"-->
+                    <div class="code-input-container">
+                        <input type="tel" class="cool code-input" data-bind="element: passwordInputField, value: inputPassword" placeholder="Код подтверждения" /> <!---->
+                    </div>
+                    <span data-bind="visible: registerMessage()!= '', text: registerMessage"></span>
+                </div>
+
+            </div>
+        </div>
+        <div data-bind="visible: isAuthorized()">
+            <!--<div class="container part auth-success" data-bind="visible: isAuthSuccess()">
+                <p>Вы успешно авторизовались</p>
+            </div>-->
+            <div data-bind="/*visible: !isAuthSuccess()*/">
+                <div class="container">
+                    <div class="part phone-confirm-form">
+                        <label class="phone-format-label">+7 </label>
+                        <div class="code-input-container">
+                            <input type="tel" class="cool" data-bind="value: login" placeholder="Введите номер телефона"/>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="container">
+                    <div class="part">
+                        <div class="code-input-container">
+                            <input type="tel" id="passwordInputField" class="cool code-input" data-bind="element: passwordInputField, value: inputPassword" placeholder="Код подтверждения" /> <!---->
+                        </div>
+                        <span data-bind="visible: registerMessage()!= '', text: registerMessage"></span>
+                    </div>
+
+                </div>
+                <div class="input-container" data-bind="">
+                    <a class="button get-code-button" data-bind="click: signOut">Выйти</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!--<div class="container">
+            <div class="part" data-bind="">
+                <p data-bind="text: 'Login: ' + login()"></p>
+                <p data-bind="text: 'Password: ' + password()"></p>
+                <p data-bind="text: 'Id: ' + id()"></p>
+                <p data-bind="text: 'Region id: ' + regionId()"></p>
+                <p data-bind="text: 'Is registered: ' + isRegistered()"></p>
+                <p data-bind="text: 'Is authorized: ' + isAuthorized()"></p>
+                <p data-bind="text: 'Is auth success: ' + isAuthSuccess()"></p>
+            </div>
+        </div>-->
+    </div>
+</div>
+
+<!-- Balance screen -->
+<div class="page balance-page" data-bind="page: 'balance'">
+    <div class="header fixed-header">
+        <div class="btn-left btn-back" data-bind="click: $root.moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">Пополнение баланса</p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div class="content">
+        <div class="container">
+            <div class="part refill-form">
+                <a href="#" class="button refill-button" >Пополнить</a>  <!--data-bind="click: sendConfirmRequest"-->
+                <div class="code-input-container">
+                    <input type="tel" class="cool refill-input" placeholder="Введите сумму для пополнения" /> <!--data-bind="value: confirmCode"-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Intro screen -->
+<div class="page intro-page" data-bind="page: 'intro'">
+    <div class="header fixed-header">
+        <div class="btn-left btn-back" data-bind="click: $root.moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">Наши преимущества</p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div class="content">
+        <div class="container">
+            <div class="pagination-container">
+                <div class="slides-pagination" data-bind="foreach: $root.introSteps, pagination: $root.introSteps()">
+                    <div data-bind="style: { marginRight: $index() == $root.introSteps().length - 1 ?  '0px' : '15px' }, attr: {'class': $root.currentIntroStepIndex() == $index() ? 'drivers-cards-pagination-circle active-circle': 'drivers-cards-pagination-circle' }, click: function(){ $root.swipeViews['introStepsSwipe'].slide($index()) }"></div>
+                </div>
+            </div>
+
+            <div id='introStepsSwipe' style='max-width:500px;margin:0 auto; height: 240px' class='swipe' data-bind="swipedView: $root.currentIntroStepIndex">
+                <div class='swipe-wrap' data-bind="foreach: $root.introSteps">
+                    <div>
+                        <div class="driver-info" width="100%" height="100%">
+                            <img src="img/person.jpg"  alt="" style="width: 150px"/>  <!--width="110" height="110"-->
+                            <div class="driver-details-info">
+                                <h1 data-bind="text: title">Step 1</h1>
+                                <p data-bind="text: text">Step 1 text</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- About screen -->
+<div class="page intro-page" data-bind="page: 'about'">
+    <div class="header fixed-header">
+        <div class="btn-left btn-back" data-bind="click: $root.moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">О программе</p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div class="content">
+        <div class="container">
+            <div class="part about-text">
+                <h1 data-bind="text: appName"></h1>
+                <img src="img/logo64.png" alt="itaxio"/>
+                <p>Версия: <span data-bind="text: appVersion"></span></p>
+                <p data-bind="text: 'Разработчики: ' + developers"></p>
+                <p data-bind="text: description"></p>
+                <p data-bind="text: vendorName"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Settings page -->
+<div class="page settings-page" data-bind="page: 'settings'">
+    <div class="header fixed-header">
+        <div class="btn-left btn-back" data-bind="click: $root.moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">Настройки</p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div class="content">
+        <div class="container">
+            <div class="part">
+                <!--<p data-bind="text: 'Is displaying carousel menu: ' + $root.isCarouselDisplaying()"></p>-->
+                <div class="order-type-label settings-select-param">
+                    <label>Стиль меню</label>
+                    <div><input type="radio" name="carouselDisplayed" value="true" data-bind="checked: isCarouselDisplayingSelect"/>Графическое меню</div>
+                    <div><input type="radio" name="carouselDisplayed" value="false" data-bind="checked: isCarouselDisplayingSelect"/>Стандартное меню</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Address page -->
+<div class="page address" data-bind="page: 'address', with: order">
+    <div class="header fixed-header" data-bind="with: currentAddress">
+        <div class="btn-left btn-back" data-bind="click: $root.moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: $root.pageTitle">Адрес </p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div class="content" data-bind="with: currentAddress">
+        <div class="container address-input-container" style="padding-right: 0px">
+            <span class="address-icon" data-bind="style: { 'backgroundImage': 'url('+icon+')' }"></span>
+            <div class="code-input-container">
+                <input type="text" class="cool street-input" style="display: table-cell" name="StreetArrival" id="StreetArrival" data-bind="value: streetNameInputValue, valueUpdate: ['afterkeydown', 'input'], event: { keypress: $root.streetNameInput(streetNameInputValue), click: $root.setStreetEditing  }" placeholder="Начните набирать название улицы">
+            </div>
+        </div>
+        <input type="hidden" id="streetArrivalId" data-bind="value: streetId" />
+        <input type="hidden" id="cityArrival" data-bind="value: cityName" />
+
+        <div data-bind="css: { container: $root.streets().length > 0 }">
+            <div class="list-part">
+                <ul class="address-list" data-bind="foreach: $root.streets, element: $root.streetsList, visible: $root.streets().length > 0 && $root.streetsAutocompleteMessage() == ''">
+                    <li data-bind="event: {click: function() { $root.selectStreet(this); } }">
+                        <p data-bind="text: name + ', ' + city"></p>
+                    </li>
+                </ul>
+            </div>
+            <div class="container" data-bind="visible: $root.streetsAutocompleteMessage() != '' && $root.streetNameBegin() != ''">
+                <div class="part">
+                    <p data-bind="text: $root.streetsAutocompleteMessage"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ko if: $root.isStreetSelected() -->
+        <div class="container address-input-container">
+            <span class="address-house-icon"></span>
+            <div class="code-input-container">
+                <input type="text" class="cool" name="HouseArrival" id="HouseArrival" data-bind="value: houseNumberInputValue, element: $root.houseNumberField, valueUpdate: ['afterkeydown', 'input'], event: { keydown: $root.houseNumberInput(houseNumberInputValue), click: $root.setHouseNumberEditing }" placeholder="Начните набирать номер дома">
+            </div>
+        </div>
+        <input type="hidden" id="houseArrivalId" data-bind="value: houseId, element: $root.houseIdField" />
+        <!-- /ko -->
+
+        <!--<p data-bind="text: 'Is house number selected: ' + $root.isHouseNumberSelected()"></p>-->
+        <div style="width: 100%" data-bind="element: $root.houseNumberListContainer,  css: { container: $root.isStreetSelected() && !$root.isHouseNumberSelected() && $root.houseNumberBegin() != '' && $root.houses().length > 0 }">
+            <div  data-bind="css: { 'list-part': !$root.isHouseNumberSelected() && $root.houseNumberBegin() != '' && $root.houses().length > 0 }">
+                <ul class="address-list" data-bind="foreach: $root.houses, element: $root.houseNumberList, visible: !$root.isHouseNumberSelected() && $root.houseNumberBegin() != '' && !$root.isStreetEditing()">
+                    <li data-bind="event: {click: function() { $root.selectHouse(this); } }">
+                        <p data-bind="text: house"></p>
+                    </li>
+                </ul>
+            </div>
+            <p data-bind="visible: $root.housesAutocompleteMessage() != '', text: $root.housesAutocompleteMessage"></p>
+        </div>
+
+        <div class="container confirm-buttons-panel">
+            <table style="width: 100%" cellspacing="0">
+                <tr>
+                    <td class="button" style="width: 50%; float: none" data-bind="click: function(){ this.clear(); controller.navigate('home', true); }">&#10007; Отмена</td>
+                    <td class="button" style="width: 50%; float: none" data-bind="click: $root.addressSelectionOk">&#10003; Готово</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- visible: ( $root.displayAddressesHistoryItems().length > 0 && $root.displayRouteHistoryItems().length > 0 ) -->
+        <div class="container" data-bind="">
+            <table class="panes-title" cellspacing="0">
+                <tr>
+                    <td class="pane-button" data-bind="css: { 'active-pane-button': $root.addressesRubric() == 'history-addresses' }, click: function() { $root.displayAddressesRubric('history-addresses'); }"><span>Адреса</span></td>
+                </tr>
+                <tr data-bind="visible: $root.displayAddressesHistoryItems().length > 0 && $root.addressesListVisibleMode() && $root.addressesRubric() == 'history-addresses'">
+                    <td>
+                        <ul class="address-list history-addresses-list" data-bind="foreach: $root.displayAddressesHistoryItems">
+                            <li data-bind="click: function() { $root.selectAddress(this); }">
+                                <p class="address-text" data-bind="historyAddressLine: $data, text: cityName + ', ' + streetName + ', ' + houseNumber"></p>
+                                <div class="address-action">
+                                    <a href="#" data-bind="click: function() { $root.removeAddressHistoryItem(this); }"><img class="remove-icon" width="25" height="25" src="img/del.png"></a>
+                                </div>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pane-button" data-bind="css: { 'active-pane-button': $root.addressesRubric() == 'history-routes' }, click: function() { $root.displayAddressesRubric('history-routes'); }"><span>Маршруты</span></td>
+                </tr>
+                <tr data-bind="visible: $root.displayRouteHistoryItems().length > 0 && $root.addressesListVisibleMode() && $root.addressesRubric() == 'history-routes'">
+                    <td>
+                        <ul class="address-list history-addresses-list" data-bind="foreach: $root.displayRouteHistoryItems">
+                            <li data-bind="click: function() { $root.selectRoute(this); }">
+                                <div class="address-text">
+                                    <p data-bind="historyAddressLine: $data, text: path"></p>
+                                </div>
+                                <div class="address-action">
+                                    <a href="#" data-bind="click: function() { $root.removeRouteHistoryItem(this); }"><img class="remove-icon" width="25" height="25" src="img/del.png"></a>
+                                </div>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pane-button" data-bind="css: { 'active-pane-button': $root.addressesRubric() == 'closest-addresses' }, click: function() { $root.displayAddressesRubric('closest-addresses'); }"><span>Рядом с вами</span></td>
+                </tr>
+                <tr data-bind="visible: $root.addressesRubric() == 'closest-addresses' && $root.addressesListVisibleMode(), css: { loading: $root.isProcess }" style="height: 100px">
+                    <td>
+                        <ul class="address-list history-addresses-list" data-bind="foreach: $root.closestPlaces, element: $root.closestPlacesList">
+                            <li data-bind="click: function() { $root.selectAddress(this); }">
+                                <p class="address-text" data-bind="text: cityName + ', ' + streetName + ', ' + houseNumber"></p>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pane-button" data-bind="css: { 'active-pane-button': $root.addressesRubric() == 'stations' }, click: function() { $root.displayAddressesRubric('stations'); }"><span>Вокзалы</span></td>
+                </tr>
+                <tr data-bind="visible: $root.addressesRubric() == 'stations' && $root.addressesListVisibleMode()" style="min-height: 100px">
+                    <td data-bind="visible: !$root.isProcess()">
+                        <ul class="address-list history-addresses-list" data-bind="foreach: $root.stations">
+                            <li data-bind="click: function() { $root.selectAddress(this); }">
+                                <p class="address-text" data-bind="text: title"></p>
+                            </li>
+                        </ul>
+                    </td>
+                    <td data-bind="visible: $root.isProcess" class="loading" style="height: 100px"></td>
+                </tr>
+                <tr>
+                    <td class="pane-button" data-bind="css: { 'active-pane-button': $root.addressesRubric() == 'airports' }, click: function() { $root.displayAddressesRubric('airports'); }"><span>Аэропорты</span></td>
+                </tr>
+                <tr data-bind="visible: $root.addressesRubric() == 'airports' && $root.addressesListVisibleMode()" style="min-height: 100px">
+                    <td data-bind="visible: !$root.isProcess()">
+                        <ul class="address-list history-addresses-list" data-bind="foreach: $root.airports">
+                            <li data-bind="click: function() { $root.selectAddress(this); }">
+                                <p class="address-text" data-bind="text: title"></p>
+                            </li>
+                        </ul>
+                    </td>
+                    <td data-bind="visible: $root.isProcess" class="loading" style="height: 100px"></td>
+                </tr>
+            </table>
+
+        </div>
+
+
+
+        <!--<div class="fixed-buttons">
+            <div data-bind="fixedButtons: null, click: function(){ this.clear(); $root.page('home'); }" class="fixed-button">Отмена</div>
+            <div data-bind="fixedButtons: null, click: $root.addressSelectionOk" class="fixed-button">ОK</div>
+        </div>-->
+
+    </div>
+</div>
+
+<!-- Region page -->
+<div class="page address" data-bind="page: 'region'">
+    <div class="header fixed-header">
+        <div class="btn-left btn-back" data-bind="click: moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">Регион</p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div class="content">
+        <div class="input-container">
+            <input type="text" class="cool" style="display: table-cell" autofocus data-bind="value: regionNameBegin, valueUpdate: ['afterkeydown', 'input'], element: $root.regionInputField, click: setRegionNameEditing" placeholder="Начните набирать название региона" />
+        </div>
+            <div data-bind="css: { container: regionNameBegin().length > 0 && !isRegionsListEmpty() > 0 && !isRegionSelected() }">
+            <ul data-bind="foreach: regions, visible: regionNameBegin().length > 0 && !isRegionsListEmpty() > 0 && !isRegionSelected()">
+                <li class="region-list-item" data-bind="click: function() { $root.selectRegion(this); }, style: { 'backgroundImage': 'url(img/gerbs/' + id + '.png)' }">
+                    <span data-bind="text: name"></span>
+                </li>
+            </ul>
+        </div>
+        <p data-bind="visible: isRegionsListEmpty() && regionNameBegin() != ''">К сожалению не найдено регионов</p>
+
+        <div class="container confirm-single-button-panel">
+            <a class="button" href="#" data-bind="click: regionSelectionOk">&#10003; Готово</a>
+        </div>
+    </div>
+
+</div>
+
+<!-- Date selection page -->
+<div class="page date" data-bind="page: 'date'">
+    <div class="header fixed-header">
+        <div class="btn-left btn-back" data-bind="click: moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">Дата и время</p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div class="content" data-bind="with: order">
+        <div class="page-title-container">
+            <p class="page-title">Дата и время</p>
+        </div>
+        <div class="container datepicker-block" data-bind="with: date">
+            <div class="datepicker-content">
+                <div class="date-part-select day-select">
+                    <input type ="button" value="+" class="datepicker-button" data-bind="click: dayPlus">
+                    <div>
+                        <span id="MyDay" data-bind="text: formatDate">Сегодня</span>
+                    </div>
+                    <input type ="button" value="-" class="datepicker-button" data-bind="click: dayMinus">
+                </div>
+                <div class="date-part-select time-part-select">
+                    <input type ="button" value="+" class="datepicker-button" data-bind="click: hourPlus">
+                    <div>
+                        <span id="MyHour" data-bind="text: formatHour">__</span>
+                    </div>
+                    <input type ="button" value="-" class="datepicker-button" data-bind="click: hourMinus">
+                </div>
+                <div class="date-part-select time-part-select">
+                    <input type ="button" value="+" class="datepicker-button" data-bind="click: minutePlus">
+                    <div>
+                        <span id="MyMinute" data-bind="text: formatMinute">__</span>
+                    </div>
+                    <input type ="button" value="-" class="datepicker-button" data-bind="click: minuteMinus">
+                </div>
+            </div>
+        </div>
+
+        <div class="container confirm-buttons-panel">
+            <table style="width: 100%" cellspacing="0">
+                <tr>
+                    <td class="button" href="#" data-bind="click: function() { resetDate(); controller.navigate('home', true); }">Текущее время</td>
+                    <td class="button" href="#" data-bind="click: function() { controller.navigate('home', true); }">&#10003; Готово</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- Order parameters page -->
+<div class="page comment" data-bind="page: 'parameters'">
+    <div class="header fixed-header">
+        <div class="btn-left btn-back" data-bind="click: moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">Параметры заказа</p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div class="content" data-bind="with: order">
+        <div class="container" style="padding: 10px">
+            <div class="order-type-label">
+                <label>Выбор автомобиля</label>
+                <div class="switcher order-type-toggle" data-bind="switcher: driverSelection, element: $root.switcher">
+                    <div class="switcher-option">
+                        <span>Автоматический</span>
+                    </div>
+                    <div class="switcher-option">
+                        <span>Самостоятельно</span>
+                    </div>
+                    <span class="slide-button"></span>
+                </div>
+            </div>
+        </div>
+        <textarea style="width: 100%" name="Comment" id="" cols="30" rows="5" placeholder="Здесь можно написать комментарий к заказу" data-bind="value: inputComment, valueUpdate: ['afterkeydown', 'input'], element: $root.commentInputField, event: { keydown: checkCommentLength }" multiple ></textarea>
+        <p data-bind="text: remainingCommentSimbols() + ' символов осталось'"></p>
+        <div class="container confirm-buttons-panel">
+            <table style="width: 100%" cellspacing="0">
+                <tr>
+                    <td class="button" href="#" data-bind="click: commentCancel">&#10007; Отмена</td>
+                    <td class="button" href="#" data-bind="click: commentOK">&#10003; Готово</td>
+                </tr>
+            </table>
+        </div>
+        <div class="container" data-bind="visible: $root.displayCommentHistoryItems.length > 0">
+            <p class="title history-title">История комментариев</p>
+            <ul class="address-list history-comments-list" data-bind="foreach: $root.displayCommentHistoryItems">
+                <li data-bind="click: function() { $root.selectComment(this); }">
+                    <p class="address-text" data-bind="historyAddressLine: $data, text: text"></p>
+                    <div class="address-action">
+                        <a href="#" data-bind="click: function() { $root.removeHistoryComment(this); }"><img class="remove-icon" width="25" height="25" src="img/del.png"></a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<!-- Route map page -->
+<div class="page routeMap" data-bind="page: 'routeMap'">
+    <div class="header fixed-header">
+        <div class="btn-left btn-back" data-bind="click: moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">Маршрут</p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div data-bind="responsiveMap: $root.orientation, element: $root.mapElement" id="map" style="height: 70%; width: 100%;"></div>
+    <div class="content" data-bind="with: order">
+        <div class="container" data-bind="css: { loading: $root.isProcess }" style="margin-bottom: 0px">
+            <div class="part order-complete-block">
+                <div>
+                    <div class="cost-panel" data-bind="visible: cost() == null">
+                        <img class="cost-digit" src="img/icons/digits/0l.png" alt=""/>
+                        <img class="cost-digit" src="img/icons/digits/0c.png" alt=""/>
+                        <img class="cost-digit" src="img/icons/digits/0r.png" alt=""/>
+                    </div>
+                    <div class="cost" data-bind="visible: !$root.isProcess()">
+                        <!--<span data-bind="text: cost"></span>-->
+                        <div class="cost-panel" data-bind="foreach: costDigits, visible: cost() != null">
+                            <img class="cost-digit" data-bind="attr: { src: 'img/icons/digits/' + $data + $parent.costDigitType($index()) + '.png' }" alt=""/>
+                        </div>
+
+                        <span class="distance-label" data-bind="text: routeDataError() != '' ? routeDataError() : distanceCount() +'м.'"></span>
+                        <span data-bind="text: status"></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="container" data-bind="visible: isConfirmation">
+            <div class="part">
+                <a href="#" class="button send-code-button" data-bind="click: sendConfirmRequest">ОК</a>
+                <div class="code-input-container">
+                    <input type="tel" class="cool code-input" placeholder="Код подтверждения" data-bind="value: confirmCode"/>
+                </div>
+            </div>
+        </div>
+        <div class="container" data-bind="visible: isComplete">
+            <div class="part">
+                <p>Заказ подтвержден</p>
+            </div>
+        </div>
+    <a class="button" href="#" data-bind="click: makeOrder, visible: !isConfirmation() && !$root.isProcess() && routeDataError() == ''">Заказать</a>
+
+    </div>
+
+
+</div>
+
+<!-- Drivers list -->
+<div class="page" data-bind="page: 'driver'">
+    <div class="header fixed-header">
+        <div class="btn-left btn-back" data-bind="click: moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">Водители</p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div class="content">
+        <div class="page-title-container">
+            <p class="page-title">Выбор водителя</p>
+        </div>
+        <ul class="part drivers-list" data-bind="foreach: $root.drivers">
+            <li data-bind="click: function() {  $root.currentDriverIndex($index()); setTimeout(function() { controller.navigate('driver-info', true); }, 100); }">
+                <p class="driver-title" data-bind="text: getFullName()"></p>
+                <div class="rating">
+                    <div class="rating-value" data-bind="style:{width: (rating / 5 * 100) + '%'}"></div>
+                </div>
+                <p class="auto-mark" data-bind="text: carmark + ' ' + carmodel"></p>
+            </li>
+        </ul>
+        <a href="#" class="button" data-bind="click: $root.updateDriversList">Обновить</a>
+        <!--<ul class="part drivers-list" data-bind="foreach: $root.drivers">
+            <li data-bind="click: function() {  $root.currentDriverIndex($index()); setTimeout(function() { controller.navigate('driver-info', true); }, 100); }">
+                <p class="driver-title" data-bind="text: getFullName()"></p>
+            </li>
+        </ul>-->
+    </div>
+</div>
+
+<!-- Driver info -->
+<div class="page" data-bind="page: 'driver-info'">
+    <div class="header fixed-header">
+        <div class="btn-left btn-back" data-bind="click: moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">Водители</p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div class="content">
+        <div class="container">
+            <!--<p data-bind="text: 'Driver index: ' + currentDriverIndex()"></p>-->
+            <div id='driverSwipe' style='max-width:500px;margin:0 auto; /*height: 240px*/' class='swipe' data-bind="swipedView: $root.currentDriverIndex">
+                <div class='swipe-wrap' data-bind="foreach: $root.drivers">
+                    <div>
+                        <div class="driver-info" > <!-- width="100%" height="100%" -->
+                            <div>
+                                <img src="img/person.jpg" width="110" height="110" alt=""/>
+                                <div class="driver-details-info">
+                                    <p class="driver-title" data-bind="text: getFullName()"></p>
+                                    <div class="rating">
+                                        <div class="rating-value" data-bind="style:{width: (rating / 5 * 100) + '%'}"></div>
+                                    </div>
+                                </div>
+                                <div class="car-info">
+                                    <div class="model-logo">
+                                        <img width="100px" height="75px" src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQSwAqR9XvBFYa2NxpCB2KkpGFWDnHHPtzxN1my0FAjWoR3UlR8OQ" alt=""/>
+                                    </div>
+                                    <div class="car-details">
+                                        <div class="car-info-detail">
+                                            <span class="car-detail-label">Модель машины:</span> <span class="car-detail-value" data-bind="text: carmark + ' ' + carmodel"></span>
+                                        </div>
+                                        <div class="car-info-detail">
+                                        <!--<p data-bind="text: 'Год выпуска машины: ' + caryear"></p>-->
+                                            <span class="car-detail-label">Номер машины:</span><span class="car-detail-value" data-bind="text: carno"></span>
+                                        </div>
+                                        <div class="car-info-detail">
+                                            <p class="car-detail-label">Цвет машины: </p> <p class="car-detail-value" data-bind="text: carcolor"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pagination-container">
+                <div class="slides-pagination" data-bind="foreach: $root.drivers, pagination: $root.drivers()">
+                    <!--  -->
+                    <div data-bind="style: { marginRight: $index() == $root.drivers().length - 1 ?  '0px' : '15px' }, attr: {'class': $root.currentDriverIndex() == $index() ? 'drivers-cards-pagination-circle active-circle': 'drivers-cards-pagination-circle' }, click: function(){ $root.swipeViews['driverSwipe'].slide($index()) }"></div>
+                </div>
+            </div>
+
+            <!--<ul class="part drivers-list" data-bind="foreach: $root.drivers">
+                <li data-bind="click: function() {  $root.currentDriverIndex($index()); setTimeout(function() { controller.navigate('driver-info', true); }, 100); }">
+                    <p class="driver-title" data-bind="text: getFullName()"></p>
+                </li>
+            </ul>-->
+
+        </div>
+        <a href="#" class="button">Выбрать</a>
+
+    </div>
+</div>
+
+<!-- Social networks screen -->
+<div class="page options" data-bind="page: 'options'">
+    <div class="header fixed-header">
+        <div class="btn-left btn-back" data-bind="click: moveBack">
+            <i class="back-icon"></i>
+        </div>
+        <p class="title" data-bind="text: pageTitle">Настройки</p>
+        <div class="btn-right btn-menu" data-bind="linkTo: $root.isCarouselDisplaying() ? 'carouselMenu' : 'menu'">
+            <i class="menu-icon"></i>
+        </div>
+    </div>
+    <div class="content">
+        <div class="container">
+            <div class="loading-panel" data-bind="visible: isProcess">
+                <img src="img/loading.gif" />
+            </div>
+            <div class="user-info" data-bind="visible: isAuthorithed(), with: currentUser">
+                <p id="userName" data-bind="text: 'Добро пожаловать, ' + firstName() + ' ' + lastName()"></p>
+                <img id="user_img" data-bind="attr: { src: photo }">
+                <a href="#" data-bind="click: $root.logoutUser">Выйти</a>
+                <textarea name="post-message" data-bind="value: $root.postText, valueUpdate: [ 'afterkeydown', 'input' ]" cols="30" rows="10"></textarea>
+                <button id="publish" data-bind="click: $root.publishToWall">Опубликовать</button>
+            </div>
+            <div class="login-form" data-bind="visible: !isAuthorithed() && !isProcess()">
+                <div class="">
+                   <p>Войти</p>
+                </div>
+                <div class="auth-field">
+                    <div class="auth-button facebook-button">
+                        <p>
+                        <a href="#" data-bind="click: authFacebook">
+                            <img src="img/icons/social/facebook.png" class="auth-button-icon" alt=""/>
+                        </a>
+                        Facebook
+                        </p>
+                    </div>
+                </div>
+                <div class="auth-field">
+                    <div class="auth-button facebook-button">
+                        <p>
+                            <a href="#" data-bind="click: authVkontakte">
+                                <img src="img/vk.jpg" class="auth-button-icon" alt=""/>
+                            </a>
+                            Вконтакте
+                        </p>
+                    </div>
+                </div>
+                <div class="auth-field">
+                    <div class="auth-button fourquare-button">
+                        <p>
+                            <a href="#" data-bind="click: authFoursquare">
+                                <img src="img/foursquare.png" class="auth-button-icon" alt=""/>
+                            </a>
+                            Foursquare
+                        </p>
+                    </div>
+                </div>
+                <!--<div class="auth-field">
+                    <a class="button" href="#" data-bind="click: $root.authorizeUser">Test auth</a>
+                </div>-->
+
+                <!--<div class="auth-field">
+                    <a href="#" class="auth-button vkontakte-button" data-bind="click: authVkontakte">
+                        Вконтакте
+                    </a>
+                </div>-->
+
+                <div class="flamp-connect">
+                    <a href="http://novosibirsk.flamp.ru/firm/atlas_taksi-141265770111338?utm_source=widget&utm_medium=read&utm_campaign=Widget_big">
+                        <img data-bind="banner: ''" src="http://www.atlas-taxi.com/template/images/banner_flamp_1.png">
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+    <!-- Help screen -->
+    <div class="page help" data-bind="page: 'help'"></div>
+
+    <script src="libs/jquery-1.10.1.js"></script>
+    <script type="text/javascript" src="libs/knockout/knockout-2.1.0.js"></script>
+    <script type="text/javascript" src="libs/knockout/knockout.localStorage.js"></script>
+    <script type="text/javascript" src="libs/knockout/knockout.mapping-latest.js"></script>
+    <script type="text/javascript" src="libs/underscore-min.js"></script>
+    <script type="text/javascript" src="libs/backbone-min.js"></script>
+    <script type="text/javascript" src="http://maps.api.2gis.ru/1.0"></script>
+    <script type="text/javascript" charset="utf-8" src="libs/cordova-2.4.0.js"></script>
+    <!-- Common classes -->
+    <script type="text/javascript" src="js/map.js"></script>
+    <!--<script type="text/javascript" src="js/swipe_view.js"></script>-->
+    <script type="text/javascript" src="libs/swipe.js"></script>
+
+    <!-- Cordova plugins -->
+    <script type="text/javascript" src="libs/softkeyboard.js"></script>
+
+    <!-- View model classes -->
+    <script type="text/javascript" src="js/order.js"></script>
+    <script type="text/javascript" src="js/driver.js"></script>
+    <script type="text/javascript" src="js/user.js"></script>
+    <script type="text/javascript" src="js/history.js"></script>
+    <script type="text/javascript" src="js/social.js"></script>
+    <script type="text/javascript" src="js/menu.js"></script>
+    <script type="text/javascript" src="js/viewmodel1.js"></script>
+
+    <!-- Main class -->
+    <script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>

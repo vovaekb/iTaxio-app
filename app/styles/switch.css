@@ -1,0 +1,39 @@
+.switcher {
+    position: relative;
+    overflow: hidden;
+    background: #ddd;
+    /*left: 50%;
+    margin-left: -140px;*/
+}
+
+.switcher-option {
+    float: left;
+    position: relative;
+    font-size: 16px;
+    z-index: 10;
+    width: 50%;
+    text-align: center;
+    opacity: .3;
+}
+
+.switcher-option span {
+    font-size: 13pt;
+}
+
+.active {
+    opacity: 1;
+}
+
+.inactive {
+    opacity: .3;
+}
+
+.slide-button {
+    position: absolute;
+    z-index: 5;
+    background: #999;
+    left: 50%;
+    top: 0;
+    width: 50%;
+    height: 100%;
+}
